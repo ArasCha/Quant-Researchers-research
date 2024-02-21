@@ -6,9 +6,10 @@
 
 ## Add your LinkedIn session tokens
 
-2 of them are necessary:
+Create a `.env` file at the root of the project and add these 2 fields:
 - `li_at`
 - `JSESSIONID`
+You can find their value at linkedin.com by logging into your account
 
 ## Install a MongoDB database
 
