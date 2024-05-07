@@ -1,7 +1,13 @@
 from request import request_profiles, request_education
 from utils import extract_profile_id
-from db import db
+from db import insert_data
 import time
+import traceback
+
+
+
+
+
 
 if __name__ == "__main__":
 
@@ -32,16 +38,23 @@ if __name__ == "__main__":
                     except:
                         degree = None
 
-                    education_total.append({"school": school, "degree": degree})
+                    try:
+                        year = education["components"]["entityComponent"]["caption"]["text"]
+                    except:
+                        year = None
+
+                    education_total.append({"school": school, "degree": degree, "year": year})
                 
-                quant_researchers = db.quant_researchers
-                quant_researchers.insert_one({"profile_url": profile_url, "education": education_total})
+                # quant_researchers = db.quant_researchers
+                # quant_researchers.insert_one({"profile_url": profile_url, "education": education_total})
                 print(profile_url)
+                insert_data({"profile_url": profile_url, "education": education_total})
 
                 time.sleep(10)
 
-            except Exception as e: # a bunch of irrelevant data will be in data. If it doesn't have the navigationUrl attribute we'll assume it's not a profile
-                if profile["entityUrn"]: # it's normal to have this entityUrn attribute
-                    pass
-                else:
-                    print("Weird:", str(e))
+            except KeyError as e: # a bunch of irrelevant data will be in data. If it doesn't have the navigationUrl attribute we'll assume it's not a profile
+                pass
+
+            except Exception as e:
+                traceback.print_exc()
+
