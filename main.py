@@ -1,11 +1,8 @@
-from request import request_profiles, request_education
-from utils import extract_profile_id
+from request import request_profiles, request_education, request_certifications
+from utils import extract_profile_id, extract_education_data, extract_certifications_data
 from db import insert_data
 import time
 import traceback
-
-
-
 
 
 
@@ -24,31 +21,18 @@ if __name__ == "__main__":
                 
                 profile_id = extract_profile_id(raw_profile_url)
 
-                data = request_education(profile_id)
-                education_data = data["included"][0]["components"]["elements"]
-
-                education_total = []
-
-                for education in education_data:
-
-                    school = education["components"]["entityComponent"]["titleV2"]["text"]["text"]
-                    
-                    try:
-                        degree = education["components"]["entityComponent"]["subtitle"]["text"]
-                    except:
-                        degree = None
-
-                    try:
-                        year = education["components"]["entityComponent"]["caption"]["text"]
-                    except:
-                        year = None
-
-                    education_total.append({"school": school, "degree": degree, "year": year})
+                raw_education_data = request_education(profile_id)
+                raw_certification_data = request_certifications(profile_id)
                 
-                # quant_researchers = db.quant_researchers
-                # quant_researchers.insert_one({"profile_url": profile_url, "education": education_total})
+                education_data = extract_education_data(raw_education_data)
+                certification_data = extract_certifications_data(raw_certification_data)
+
                 print(profile_url)
-                insert_data({"profile_url": profile_url, "education": education_total})
+                insert_data({
+                    "profile_url": profile_url,
+                    "education": education_data,
+                    "certifications": certification_data
+                    })
 
                 time.sleep(10)
 
