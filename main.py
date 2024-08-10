@@ -1,5 +1,5 @@
-from request import request_profiles, request_education, request_certifications
-from utils import extract_profile_id, extract_education_data, extract_certifications_data
+from request import request_profiles, request_profile_section
+from utils import extract_profile_id, extract_data
 from db import insert_data
 import time
 import traceback
@@ -21,17 +21,23 @@ if __name__ == "__main__":
                 
                 profile_id = extract_profile_id(raw_profile_url)
 
-                raw_education_data = request_education(profile_id)
-                raw_certification_data = request_certifications(profile_id)
+                raw_education_data = request_profile_section(profile_id, "education")
+                raw_experience_data = request_profile_section(profile_id, "experience")
                 
-                education_data = extract_education_data(raw_education_data)
-                certification_data = extract_certifications_data(raw_certification_data)
-
                 print(profile_url)
                 insert_data({
                     "profile_url": profile_url,
-                    "education": education_data,
-                    "certifications": certification_data
+                    "education": extract_data(raw_education_data,
+                        {   "school":"titleV2",
+                            "degree":"subtitle",
+                            "year": "caption"
+                        }),
+                    "experience": extract_data(raw_experience_data,
+                        {   "job":"titleV2",
+                            "company": "subtitle",
+                            "date": "caption",
+                            "location": "metadata"
+                        })
                     })
 
                 time.sleep(10)
