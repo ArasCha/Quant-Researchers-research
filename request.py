@@ -28,25 +28,22 @@ headers = {
 def request_profiles(page_number: int) -> dict:
     
     page_limit = 10
-    url = f"https://www.linkedin.com/voyager/api/graphql?variables=(start:{page_number*page_limit},origin:SWITCH_SEARCH_VERTICAL,query:(keywords:quantitative%20researcher%20trader,flagshipSearchIntent:SEARCH_SRP,queryParameters:List((key:industry,value:List(46,43,129,45)),(key:resultType,value:List(PEOPLE))),includeFiltersInResponse:false))&queryId=voyagerSearchDashClusters.fd30e58dee57533de461750d523c4d31"
-    
-    request = requests.get(url, headers=headers)
-
-    return request.json()
-
-
-def request_education(profile_id:str) -> dict:
-
-    url = f"https://www.linkedin.com/voyager/api/graphql?includeWebMetadata=true&variables=(profileUrn:urn%3Ali%3Afsd_profile%3A{profile_id},sectionType:education,locale:en_US)&queryId=voyagerIdentityDashProfileComponents.0aa4fe1d7819f1b21efc5be88cc3735d"
+    url = f"https://www.linkedin.com/voyager/api/graphql?variables=(start:{page_number*page_limit},origin:FACETED_SEARCH,query:(keywords:quantitative,flagshipSearchIntent:SEARCH_SRP,queryParameters:List((key:geoUrn,value:List(90009659)),(key:industry,value:List(43)),(key:resultType,value:List(PEOPLE))),includeFiltersInResponse:false))&queryId=voyagerSearchDashClusters.37920f17209f22c510dd410658abc540"
+    """Quants around Paris and in Financial Services"""
 
     request = requests.get(url, headers=headers)
 
     return request.json()
 
 
-def request_certifications(profile_id:str) -> dict:
+def request_profile_section(profile_id: str, section: str) -> dict:
+    """
+    Args:
+        profile_id (str): id of the LinkedIn profile.
+        section (str): education | certifications | experience.
+    """
 
-    url = f"https://www.linkedin.com/voyager/api/graphql?variables=(profileUrn:urn%3Ali%3Afsd_profile%3A{profile_id},sectionType:certifications,locale:en_US)&queryId=voyagerIdentityDashProfileComponents.34c38eb036e24f42647c693a62c45fbd"
+    url = f"https://www.linkedin.com/voyager/api/graphql?variables=(profileUrn:urn%3Ali%3Afsd_profile%3A{profile_id},sectionType:{section},locale:en_US)&queryId=voyagerIdentityDashProfileComponents.0aa4fe1d7819f1b21efc5be88cc3735d"
 
     request = requests.get(url, headers=headers)
 
