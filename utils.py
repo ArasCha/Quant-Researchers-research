@@ -69,7 +69,7 @@ def extract_projects(raw_data: dict) -> dict:
             institution = None
         try:
             link = project_data["components"]["entityComponent"]["subComponents"]["components"][1]["components"]["actionComponent"]["action"]["navigationAction"]["actionTargetV2"]["deeplink"]
-        except TypeError:
+        except:
             link = None
         try:
             date = project_data["components"]["entityComponent"]["subtitle"]["text"]
