@@ -7,7 +7,7 @@ JSESSIONID = dotenv_values(".env")["JSESSIONID"]
 headers = {
     "accept": "application/vnd.linkedin.normalized+json+2.1",
     "accept-language": "fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-    "csrf-token": "ajax:1660307672432702115",
+    "csrf-token": f"{JSESSIONID}",
     "sec-ch-ua": "\"Not A(Brand\";v=\"99\", \"Microsoft Edge\";v=\"121\", \"Chromium\";v=\"121\"",
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "\"Windows\"",
@@ -48,3 +48,29 @@ def request_profile_section(profile_id: str, section: str) -> dict:
     request = requests.get(url, headers=headers)
 
     return request.json()
+
+
+def request_profile_connex_profiles(profile_id: str) -> list:
+    """
+    Returns: list of 40 profiles relevant to a profile
+    """
+    ...
+
+    url_known = f"https://www.linkedin.com/voyager/api/graphql?variables=(profileUrn:urn%3Ali%3Afsd_profile%3A{profile_id})&queryId=voyagerIdentityDashProfileCards.7fdc5805f4be08bcc3a3577013d66d3d"
+    request_known = requests.get(url_known, headers=headers)
+
+    url_more = f"https://www.linkedin.com/voyager/api/graphql?variables=(profileUrn:urn%3Ali%3Afsd_profile%3A{profile_id},sectionType:browsemap-recommendations)&queryId=voyagerIdentityDashProfileComponents.7f5e16224b53da3d4b722ed8f8f5fbf8"
+    request_more = requests.get(url_more, headers=headers)
+
+    content = request_known.json()
+    content["included"].extend(request_more.json()["included"])
+
+    return content
+
+# People you may know
+# fetch("https://www.linkedin.com/voyager/api/graphql?includeWebMetadata=true&variables=(profileUrn:urn%3Ali%3Afsd_profile%3AACoAACXe8B8Bzwl8QBfM4UkWU2vMPr0gguhXStg)&queryId=voyagerIdentityDashProfileCards.7fdc5805f4be08bcc3a3577013d66d3d", {
+
+
+
+# More profiles for you
+# fetch("https://www.linkedin.com/voyager/api/graphql?includeWebMetadata=true&variables=(profileUrn:urn%3Ali%3Afsd_profile%3AACoAACXe8B8Bzwl8QBfM4UkWU2vMPr0gguhXStg,sectionType:browsemap-recommendations)&queryId=voyagerIdentityDashProfileComponents.7f5e16224b53da3d4b722ed8f8f5fbf8", {
