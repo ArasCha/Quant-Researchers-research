@@ -25,7 +25,7 @@ def insert_data(data:dict):
 def get_total_data():
 
 	existing_data = {}
-	with open(file_path) as file:
+	with open(file_path, 'r', encoding="utf-8") as file:
 		existing_data = json.load(file)
 
 	return existing_data

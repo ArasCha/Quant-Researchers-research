@@ -3,7 +3,6 @@ from utils import extract_profile_id, extract_data, extract_profiles_url, extrac
 from db import insert_data, get_total_data, profile_not_in_db
 import time
 import traceback
-import json
 
 
 
@@ -41,28 +40,28 @@ def add_profile_to_db(profile_id, profile_url):
 
 if __name__ == "__main__":
 
-    for page_number in range(100): # only 100 pages maximum
+    # for page_number in range(100): # only 100 pages maximum
 
-        data = request_profiles(page_number)
+    #     data = request_profiles(page_number)
 
-        profiles = data["included"]
+    #     profiles = data["included"]
 
-        for profile in profiles:
-            try:
-                try:
-                    raw_profile_url: str = profile["navigationUrl"]
-                except KeyError: # a bunch of irrelevant data will be in data. If it doesn't have the navigationUrl attribute we'll assume it's not a profile
-                    continue
+    #     for profile in profiles:
+    #         try:
+    #             try:
+    #                 raw_profile_url: str = profile["navigationUrl"]
+    #             except KeyError: # a bunch of irrelevant data will be in data. If it doesn't have the navigationUrl attribute we'll assume it's not a profile
+    #                 continue
                 
-                profile_url = raw_profile_url.split("?")[0] # we keep URI and remove URL parameters
-                profile_id = extract_profile_id(raw_profile_url)
+    #             profile_url = raw_profile_url.split("?")[0] # we keep URI and remove URL parameters
+    #             profile_id = extract_profile_id(raw_profile_url)
 
-                add_profile_to_db(profile_id, profile_url)
+    #             add_profile_to_db(profile_id, profile_url)
 
-                time.sleep(10)
+    #             time.sleep(10)
 
-            except Exception as e:
-                traceback.print_exc()
+    #         except Exception as e:
+    #             traceback.print_exc()
 
     i = 0
     while True:
@@ -76,8 +75,6 @@ if __name__ == "__main__":
 
         filtered_profiles = list(filter(profile_not_in_db, connex_profiles)) # profiles that aren't already in db
         
-        print(len(connex_profiles), len(filtered_profiles))
-
         for profile in filtered_profiles:
             add_profile_to_db(profile["id"], profile["url"])
             time.sleep(10)
