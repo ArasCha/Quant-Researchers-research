@@ -92,10 +92,13 @@ def extract_profiles_url(raw_data: dict) -> list[dict]:
 
     for element in raw_data["included"]:
         try:
-            profiles_url.append({
+            profile = {
                 "url": f"https://www.linkedin.com/in/{element['publicIdentifier']}",
                 "id": element['entityUrn'].split(":")[3]
-                })
+            }
+            if profile not in profiles_url:
+                profiles_url.append(profile)
+
         except KeyError:
             pass
 
