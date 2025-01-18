@@ -1,42 +1,42 @@
-from pymongo import MongoClient
-import json
-
-client = MongoClient("127.0.0.1", 27017)
-
-db = client.qr2
-
-file_path ='data.json'
+from pymongo.mongo_client import MongoClient
+from dotenv import dotenv_values
 
 
-def insert_data(data:dict):
-
-	with open(file_path, 'r+', encoding="utf-8") as file:
-		try:
-			existing_data = json.load(file)
-		except json.JSONDecodeError:
-			existing_data = []
-
-		existing_data.append(data)
-		file.seek(0)
-		json.dump(existing_data, file, indent=4, ensure_ascii=False)
-		file.truncate()
+MONGO_URI = dotenv_values(".env")["MONGO_URI"]
+client = MongoClient(MONGO_URI)
 
 
-def get_total_data():
+db = client.linkedin_users
+profiles = db.get_collection("profiles")
+index = db.get_collection("index")
 
-	existing_data = {}
-	with open(file_path, 'r', encoding="utf-8") as file:
-		existing_data = json.load(file)
-
-	return existing_data
+local_list_of_users_id = []
 
 
-def profile_not_in_db(profile: dict) -> bool:
 
-	data = get_total_data()
-	for profile_db in data:
-		if profile_db["profile_url"] == profile["url"]:
-			return False
+
+def insert_profile(profile_data:dict):
+
+	profiles.insert_one(profile_data)
+	local_list_of_users_id.append(profile_data["profile_id"])
+
+
+def get_list_of_users_id():
+
+	global local_list_of_users_id
+	if not local_list_of_users_id:
+		cursor = profiles.find({}, {"profile_id": 1, "_id": 0})
+		local_list_of_users_id = [profile["profile_id"] for profile in cursor]
 	
-	return True
+	return local_list_of_users_id
+
+
+def update_index(new_index: int):
+	result = index.update_one({}, {"$set": {"value": new_index}})
+
+def get_index() -> int:
+	"""
+	Function that returns the root profile index in db
+	"""
+	return index.find_one({})["value"]
 

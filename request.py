@@ -54,11 +54,12 @@ def request_profile_connex_profiles(profile_id: str) -> list:
     """
     Returns: list of 40 profiles relevant to a profile
     """
-    ...
 
+    # People you may know
     url_known = f"https://www.linkedin.com/voyager/api/graphql?variables=(profileUrn:urn%3Ali%3Afsd_profile%3A{profile_id})&queryId=voyagerIdentityDashProfileCards.7fdc5805f4be08bcc3a3577013d66d3d"
     request_known = requests.get(url_known, headers=headers)
 
+    # More profiles for you
     url_more = f"https://www.linkedin.com/voyager/api/graphql?variables=(profileUrn:urn%3Ali%3Afsd_profile%3A{profile_id},sectionType:browsemap-recommendations)&queryId=voyagerIdentityDashProfileComponents.7f5e16224b53da3d4b722ed8f8f5fbf8"
     request_more = requests.get(url_more, headers=headers)
 
@@ -67,10 +68,19 @@ def request_profile_connex_profiles(profile_id: str) -> list:
 
     return content
 
-# People you may know
-# fetch("https://www.linkedin.com/voyager/api/graphql?includeWebMetadata=true&variables=(profileUrn:urn%3Ali%3Afsd_profile%3AACoAACXe8B8Bzwl8QBfM4UkWU2vMPr0gguhXStg)&queryId=voyagerIdentityDashProfileCards.7fdc5805f4be08bcc3a3577013d66d3d", {
 
+def notify_error(message: str):
 
+    notifier_url = dotenv_values(".env")["NOTIFIER_URL"]
+    auth = dotenv_values(".env")["NOTIFIER_AUTH"]
 
-# More profiles for you
-# fetch("https://www.linkedin.com/voyager/api/graphql?includeWebMetadata=true&variables=(profileUrn:urn%3Ali%3Afsd_profile%3AACoAACXe8B8Bzwl8QBfM4UkWU2vMPr0gguhXStg,sectionType:browsemap-recommendations)&queryId=voyagerIdentityDashProfileComponents.7f5e16224b53da3d4b722ed8f8f5fbf8", {
+    headers = {
+        "Content-Type": "application/json",
+        "Accept-Charset": "utf-8"
+    }
+    data = {
+        "message": message,
+        "authorization": auth
+    }
+
+    response = requests.post(notifier_url, json=data, headers=headers)
