@@ -84,6 +84,7 @@ if __name__ == "__main__":
 
             i+=1
             update_index(i)
+            time.sleep(10)
 
         except Exception as e:
             error_traceback = traceback.print_exc()
