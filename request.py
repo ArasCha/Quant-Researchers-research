@@ -50,7 +50,7 @@ def request_profile_section(profile_id: str, section: str) -> dict:
     return request.json()
 
 
-def request_profile_connex_profiles(profile_id: str) -> list:
+def request_profile_connex_profiles(profile_id: str) -> list[dict]:
     """
     Returns: list of 40 profiles relevant to a profile
     """
@@ -66,7 +66,7 @@ def request_profile_connex_profiles(profile_id: str) -> list:
     content = request_known.json()
     content["included"].extend(request_more.json()["included"])
 
-    return content
+    return content["included"]
 
 
 def notify_error(message: str):

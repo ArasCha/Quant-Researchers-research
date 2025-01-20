@@ -86,20 +86,34 @@ def extract_projects(raw_data: dict) -> dict:
     return final_elements
 
 
-def extract_profiles_url(raw_data: dict) -> list[dict]:
+def extract_profiles_info(profiles_data: list[dict]) -> list[dict]:
 
     profiles_url = []
 
-    for element in raw_data["included"]:
+    for element in profiles_data:
         try:
             profile = {
                 "url": f"https://www.linkedin.com/in/{element['publicIdentifier']}",
-                "id": element['entityUrn'].split(":")[3]
+                "id": element['entityUrn'].split(":")[3],
+                "headline": element["headline"]
             }
             if profile not in profiles_url:
                 profiles_url.append(profile)
 
         except KeyError:
-            pass
+            continue # the element of this loop is not a profile
 
     return profiles_url
+
+
+def filter_connex_profiles(profiles: list[dict]) -> list[dict]:
+    """
+    Filters profiles that aren't Quants or Traders
+    """
+    final_profiles = []
+    for profile in profiles:
+
+        if re.search(r"(quant|trad(er|ing))", profile["headline"], re.IGNORECASE):
+            final_profiles.append(profile)
+
+    return final_profiles

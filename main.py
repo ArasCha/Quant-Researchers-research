@@ -1,5 +1,5 @@
 from request import request_profiles, request_profile_section, request_profile_connex_profiles, notify_error
-from utils import extract_profile_id, extract_data, extract_profiles_url, extract_projects
+from utils import extract_profile_id, extract_data, extract_profiles_info, extract_projects, filter_connex_profiles
 from db import insert_profile, get_list_of_users_id, get_index, update_index
 import time
 import traceback
@@ -74,9 +74,10 @@ if __name__ == "__main__":
             root_profile_id = get_list_of_users_id()[i]
 
             raw_connex_profiles = request_profile_connex_profiles(root_profile_id)
-            connex_profiles = extract_profiles_url(raw_connex_profiles)
+            connex_profiles = extract_profiles_info(raw_connex_profiles)
+            filtered_connex_profiles = filter_connex_profiles(connex_profiles)
 
-            for profile in connex_profiles:
+            for profile in filtered_connex_profiles:
                 if profile["id"] not in get_list_of_users_id():
                     add_profile_to_db(profile["id"], profile["url"])
                     time.sleep(10)
@@ -84,12 +85,9 @@ if __name__ == "__main__":
             i+=1
             update_index(i)
 
-        except JSONDecodeError:
-            time.sleep(10)
-
         except Exception as e:
             error_traceback = traceback.print_exc()
             notify_error(str(error_traceback))
             print(error_traceback)
-            time.sleep(10)
+            time.sleep(100)
 
