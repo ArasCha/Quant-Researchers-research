@@ -113,7 +113,11 @@ def filter_connex_profiles(profiles: list[dict]) -> list[dict]:
     final_profiles = []
     for profile in profiles:
 
-        if re.search(r"(quant|trad(er|ing))", profile["headline"], re.IGNORECASE):
+        try:
+            if re.search(r"(quant|trad(er|ing))", profile["headline"], re.IGNORECASE):
+                final_profiles.append(profile)
+        except TypeError as e:
+            print(str(e))
             final_profiles.append(profile)
 
     return final_profiles
