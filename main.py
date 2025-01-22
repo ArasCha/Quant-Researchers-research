@@ -61,6 +61,7 @@ if __name__ == "__main__":
             for profile in filtered_connex_profiles:
                 if profile["id"] not in get_list_of_users_id():
                     add_profile_to_db(profile["id"], profile["url"])
+                    print(profile["url"])
                     time.sleep(10)
 
             i+=1
