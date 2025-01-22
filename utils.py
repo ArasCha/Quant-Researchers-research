@@ -114,7 +114,7 @@ def filter_connex_profiles(profiles: list[dict]) -> list[dict]:
     for profile in profiles:
 
         try:
-            if re.search(r"(quant(?:itati.*)?$|trad(er|ing))", profile["headline"], re.IGNORECASE):
+            if re.search(r"(quant(?:(itati| ).*)?$|trad(er|ing))", profile["headline"], re.IGNORECASE):
                 final_profiles.append(profile)
         except TypeError as e:
             print("Error while regex searching in profile headline: ", str(e))
