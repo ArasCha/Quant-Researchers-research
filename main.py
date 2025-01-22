@@ -1,69 +1,50 @@
-from request import request_profiles, request_profile_section, request_profile_connex_profiles, notify_error
-from utils import extract_profile_id, extract_data, extract_profiles_info, extract_projects, filter_connex_profiles
+from request import request_profiles, request_profile_sections, request_profile_connex_profiles, notify_error
+from utils import extract_profile_id, extract_profiles_info, filter_connex_profiles, format_data
 from db import insert_profile, get_list_of_users_id, get_index, update_index
 import time
 import traceback
-from requests.exceptions import JSONDecodeError
 
 
-
-
-def add_profile_to_db(profile_id, profile_url):
+def add_profile_to_db(profile_id: str, profile_url: str):
     
-    raw_education_data = request_profile_section(profile_id, "education")
-    raw_experience_data = request_profile_section(profile_id, "experience")
-    raw_certifications_data = request_profile_section(profile_id, "certifications")
-    raw_projects_data = request_profile_section(profile_id, "projects")
+    profile_sections = request_profile_sections(profile_id)
+    ready_data = format_data(profile_id, profile_url, profile_sections)
 
-    print(profile_url)
-    insert_profile({
-        "profile_id": profile_id,
-        "profile_url": profile_url,
-        "education": extract_data(raw_education_data,
-            {   "school": "titleV2",
-                "degree": "subtitle",
-                "year": "caption"
-            }),
-        "experience": extract_data(raw_experience_data,
-            {   "job": "titleV2",
-                "company": "subtitle",
-                "date": "caption",
-                "location": "metadata"
-            }),
-        "certifications": extract_data(raw_certifications_data,
-            {   "name": "titleV2",
-                "institution": "subtitle",
-                "year": "caption"
-            }),
-        "projects": extract_projects(raw_projects_data)
-    })
+    insert_profile(ready_data)
 
 
 
 if __name__ == "__main__":
 
-    # for page_number in range(100): # only 100 pages maximum
+    nb_profiles_in_db = len(get_list_of_users_id())
 
-    #     data = request_profiles(page_number)
+    if nb_profiles_in_db < 1000:
+        
+        starting_page = nb_profiles_in_db/100
 
-    #     profiles = data["included"]
+        for page_number in range(starting_page, 100): # only 100 pages maximum
 
-    #     for profile in profiles:
-    #         try:
-    #             try:
-    #                 raw_profile_url: str = profile["navigationUrl"]
-    #             except KeyError: # a bunch of irrelevant data will be in data. If it doesn't have the navigationUrl attribute we'll assume it's not a profile
-    #                 continue
-                
-    #             profile_url = raw_profile_url.split("?")[0] # we keep URI and remove URL parameters
-    #             profile_id = extract_profile_id(raw_profile_url)
+            data = request_profiles(page_number)
 
-    #             add_profile_to_db(profile_id, profile_url)
+            profiles = data["included"]
 
-    #             time.sleep(10)
+            for profile in profiles:
+                try:
+                    try:
+                        raw_profile_url: str = profile["navigationUrl"]
+                    except KeyError: # a bunch of irrelevant data will be in data. If it doesn't have the navigationUrl attribute we'll assume it's not a profile
+                        continue
+                    
+                    profile_url = raw_profile_url.split("?")[0] # we keep URI and remove URL parameters
+                    profile_id = extract_profile_id(raw_profile_url)
 
-    #         except Exception as e:
-    #             traceback.print_exc()
+                    add_profile_to_db(profile_id, profile_url)
+
+                    time.sleep(10)
+
+                except Exception as e:
+                    traceback.print_exc()
+
 
     i = get_index()
     while True:

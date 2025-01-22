@@ -114,10 +114,35 @@ def filter_connex_profiles(profiles: list[dict]) -> list[dict]:
     for profile in profiles:
 
         try:
-            if re.search(r"(quant|trad(er|ing))", profile["headline"], re.IGNORECASE):
+            if re.search(r"(quant(?:itati.*)?$|trad(er|ing))", profile["headline"], re.IGNORECASE):
                 final_profiles.append(profile)
         except TypeError as e:
-            print(str(e))
+            print("Error while regex searching in profile headline: ", str(e))
             final_profiles.append(profile)
 
     return final_profiles
+
+
+def format_data(profile_id: str, profile_url: str, profile_sections: dict):
+
+    return {
+        "profile_id": profile_id,
+        "profile_url": profile_url,
+        "education": extract_data(profile_sections["education"],
+            {   "school": "titleV2",
+                "degree": "subtitle",
+                "year": "caption"
+            }),
+        "experience": extract_data(profile_sections["experience"],
+            {   "job": "titleV2",
+                "company": "subtitle",
+                "date": "caption",
+                "location": "metadata"
+            }),
+        "certifications": extract_data(profile_sections["certifications"],
+            {   "name": "titleV2",
+                "institution": "subtitle",
+                "year": "caption"
+            }),
+        "projects": extract_projects(profile_sections["projects"])
+    }

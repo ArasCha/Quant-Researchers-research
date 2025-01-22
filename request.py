@@ -84,3 +84,13 @@ def notify_error(message: str):
     }
 
     response = requests.post(notifier_url, json=data, headers=headers)
+
+
+def request_profile_sections(profile_id: str) -> dict:
+
+    return {
+        "education": request_profile_section(profile_id, "education"),
+        "experience": request_profile_section(profile_id, "experience"),
+        "certifications": request_profile_section(profile_id, "certifications"),
+        "projects": request_profile_section(profile_id, "projects")
+    }
