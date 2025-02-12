@@ -6,8 +6,8 @@ def extract_profile_id(url: str) -> str:
     if mini_profile_id:
         return mini_profile_id.group(1)
     else:
-
-        raise Exception(f"Failed to extract profile id, url: {url}")
+        pass
+        "the url is like https://www.linkedin.com/search/results/people/headless?network=%5B%22O%22%5D&industry=%5B43%5D&origin=FACETED_SEARCH&keywords=quantitative"
 
 
 def extract_data(raw_data: dict, result_format: dict) -> list:

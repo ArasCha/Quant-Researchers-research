@@ -25,10 +25,10 @@ headers = {
 }
 
 
-def request_profiles(page_number: int) -> dict:
+def request_profiles(page_number: int, search_term: str, city_id: int, circle: str) -> dict:
     
     page_limit = 10
-    url = f"https://www.linkedin.com/voyager/api/graphql?variables=(start:{page_number*page_limit},origin:FACETED_SEARCH,query:(keywords:quantitative,flagshipSearchIntent:SEARCH_SRP,queryParameters:List((key:geoUrn,value:List(90009659)),(key:industry,value:List(43)),(key:resultType,value:List(PEOPLE))),includeFiltersInResponse:false))&queryId=voyagerSearchDashClusters.37920f17209f22c510dd410658abc540"
+    url = f"https://www.linkedin.com/voyager/api/graphql?variables=(start:{page_number*page_limit},origin:FACETED_SEARCH,query:(keywords:{search_term},flagshipSearchIntent:SEARCH_SRP,queryParameters:List((key:geoUrn,value:List({city_id})),(key:network,value:List({circle})),(key:industry,value:List(43)),(key:resultType,value:List(PEOPLE)),(key:searchId,value:List(227d8609-91f6-4122-a859-f72c1226e4b8))),includeFiltersInResponse:false))&queryId=voyagerSearchDashClusters.37920f17209f22c510dd410658abc540"
     """Quants around Paris and in Financial Services"""
 
     request = requests.get(url, headers=headers)
