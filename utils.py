@@ -106,7 +106,7 @@ def extract_profiles_info(profiles_data: list[dict]) -> list[dict]:
     return profiles_url
 
 
-def filter_connex_profiles(profiles: list[dict]) -> list[dict]:
+def filter_profiles(profiles: list[dict]) -> list[dict]:
     """
     Filters profiles that aren't Quants or Traders
     """
