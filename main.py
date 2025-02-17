@@ -35,13 +35,11 @@ if __name__ == "__main__":
                     print(page_number)
 
                     profiles = request_profiles(page_number, search_term, city_id, circle)
+                    profiles = [profile for profile in profiles if "navigationUrl" in profile] # dicts that don't have navigationUrl attribute aren't profiles
 
                     for profile in filter_profiles(profiles):
                         try:
-                            try:
-                                raw_profile_url: str = profile["navigationUrl"]
-                            except KeyError: # a bunch of irrelevant data will be in data. If it doesn't have the navigationUrl attribute we'll assume it's not a profile
-                                continue
+                            raw_profile_url: str = profile["navigationUrl"]
                             
                             profile_url = raw_profile_url.split("?")[0] # we keep URI and remove URL parameters
                             profile_id = extract_profile_id(raw_profile_url)
