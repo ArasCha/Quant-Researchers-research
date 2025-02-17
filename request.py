@@ -33,7 +33,7 @@ def request_profiles(page_number: int, search_term: str, city_id: int, circle: s
 
     request = requests.get(url, headers=headers)
 
-    return request.json()
+    return request.json()["included"]
 
 
 def request_profile_section(profile_id: str, section: str) -> dict:
