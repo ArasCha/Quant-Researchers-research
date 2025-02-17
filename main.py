@@ -1,5 +1,5 @@
 from request import request_profiles, request_profile_sections, request_profile_connex_profiles, notify_error
-from utils import extract_profile_id, extract_profiles_info, filter_profiles, format_data
+from utils import extract_profile_id, extract_profiles_info, filter_profiles_from_research, filter_profiles, format_data
 from db import insert_profile, get_list_of_users_id, get_index, update_index
 import time
 import traceback
@@ -37,7 +37,7 @@ if __name__ == "__main__":
                     profiles = request_profiles(page_number, search_term, city_id, circle)
                     profiles = [profile for profile in profiles if "navigationUrl" in profile] # dicts that don't have navigationUrl attribute aren't profiles
 
-                    for profile in filter_profiles(profiles):
+                    for profile in filter_profiles_from_research(profiles):
                         try:
                             raw_profile_url: str = profile["navigationUrl"]
                             

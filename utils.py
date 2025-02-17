@@ -122,6 +122,22 @@ def filter_profiles(profiles: list[dict]) -> list[dict]:
 
     return final_profiles
 
+def filter_profiles_from_research(profiles: list[dict]) -> list[dict]:
+    """
+    Filters profiles that aren't Quants or Traders
+    """
+    final_profiles = []
+    for profile in profiles:
+
+        try:
+            if re.search(r"(quant(?:(itati| |,).*)?$|trad(er|ing))", profile["primarySubtitle"]["text"] + " " + profile["summary"]["text"], re.IGNORECASE):
+                final_profiles.append(profile)
+        except TypeError as e:
+            print("Error while regex searching in profile headline: ", str(e))
+            final_profiles.append(profile)
+
+    return final_profiles
+
 
 def format_data(profile_id: str, profile_url: str, profile_sections: dict):
 
